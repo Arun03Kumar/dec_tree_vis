@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const PROPERTIES = {
+const PROPERTIES:any = {
   size: {
     big: { class: "w-10 h-10 p-8", description: "Large" },
     small: { class: "w-6 h-6 p-5", description: "Small" },
@@ -36,34 +36,34 @@ const initialMarbles = [
 const QUESTION_LIBRARY = {
   Color: {
     question: "Is it red?",
-    check: (m) => m.color === "red",
+    check: (m:any) => m.color === "red",
   },
   Size: {
     question: "Is it large?",
-    check: (m) => m.size === "big",
+    check: (m:any) => m.size === "big",
   },
   Texture: {
     question: "Is it rough?",
-    check: (m) => m.texture === "rough",
+    check: (m:any) => m.texture === "rough",
   },
   Weight: {
     question: "Is it heavy (>=15kg)?",
-    check: (m) => m.weight >= 15,
+    check: (m:any) => m.weight >= 15,
   },
 };
 
-function calculateGini(marbles) {
+function calculateGini(marbles:any) {
   const total = marbles.length;
   if (total === 0) return 0;
 
-  const redCount = marbles.filter((m) => m.color === "red").length;
+  const redCount = marbles.filter((m:any) => m.color === "red").length;
   const pRed = redCount / total;
   return 1 - (pRed ** 2 + (1 - pRed) ** 2);
 }
 
-function countSplits(node) {
+function countSplits(node:any) {
   let splits = node.question ? 1 : 0;
-  node.children.forEach((child) => {
+  node.children.forEach((child:any) => {
     splits += countSplits(child);
   });
   return splits;
@@ -75,7 +75,7 @@ function countSplits(node) {
 //   return idCounter;
 // }
 
-function Marble({ marble, onInspect }) {
+function Marble({ marble, onInspect }:any) {
   const bgColor = marble.color === "red" ? "bg-red-500" : "bg-blue-500";
   const opacity = Math.min(100, 40 + marble.weight) / 100;
 
@@ -97,15 +97,15 @@ function Marble({ marble, onInspect }) {
   );
 }
 
-function Node({ node, depth, onSplit, onInspect, splittedCount }) {
-  const redCount = node.marbles.filter((m) => m.color === "red").length;
+function Node({ node, depth, onSplit, onInspect, splittedCount }:any) {
+  const redCount = node.marbles.filter((m:any) => m.color === "red").length;
   const blueCount = node.marbles.length - redCount;
   const gini = calculateGini(node.marbles);
   const total = redCount + blueCount;
   const redPercentage = total > 0 ? (redCount / total) * 100 : 0;
 
   const availableQuestions = Object.entries(QUESTION_LIBRARY).filter(
-    ([key, q]) => {
+    ([key]) => {
       if (key === "Color" && splittedCount < 2) {
         return false;
       }
@@ -133,7 +133,7 @@ function Node({ node, depth, onSplit, onInspect, splittedCount }) {
         />
 
         <div className="flex flex-wrap mb-3 relative z-10">
-          {node.marbles.map((marble) => (
+          {node.marbles.map((marble:any) => (
             <Marble key={marble.id} marble={marble} onInspect={onInspect} />
           ))}
         </div>
@@ -179,7 +179,7 @@ function Node({ node, depth, onSplit, onInspect, splittedCount }) {
       <div className="flex gap-8 justify-center mt-6 w-full">
         {node.yesId && (
           <Node
-            node={node.children.find((n) => n.id === node.yesId)}
+            node={node.children.find((n:any) => n.id === node.yesId)}
             depth={depth + 1}
             onSplit={onSplit}
             onInspect={onInspect}
@@ -188,7 +188,7 @@ function Node({ node, depth, onSplit, onInspect, splittedCount }) {
         )}
         {node.noId && (
           <Node
-            node={node.children.find((n) => n.id === node.noId)}
+            node={node.children.find((n:any) => n.id === node.noId)}
             depth={depth + 1}
             onSplit={onSplit}
             onInspect={onInspect}
@@ -200,7 +200,7 @@ function Node({ node, depth, onSplit, onInspect, splittedCount }) {
   );
 }
 
-function InstructionsModal({ onClose }) {
+function InstructionsModal({ onClose }:any) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg max-w-md mx-4 shadow-xl">
@@ -250,21 +250,21 @@ export default function MysteryDetective() {
 
   const [history, setHistory] = useState([tree]);
   const [currentState, setCurrentState] = useState(0);
-  const [inspectedMarble, setInspectedMarble] = useState(null);
+  const [inspectedMarble, setInspectedMarble] = useState<any>(null);
   const [showInstructions, setShowInstructions] = useState(true);
 
   const splittedCount = countSplits(history[currentState]);
 
-  const handleSplit = (nodeId, question) => {
+  const handleSplit = (nodeId:any, question:any) => {
     const splitter = Object.values(QUESTION_LIBRARY).find(
       (q) => q.question === question
     );
     if (!splitter) return;
 
-    const updateTree = (node) => {
+    const updateTree = (node:any) => {
       if (node.id === nodeId) {
         const yesMarbles = node.marbles.filter(splitter.check);
-        const noMarbles = node.marbles.filter((m) => !splitter.check(m));
+        const noMarbles = node.marbles.filter((m:any) => !splitter.check(m));
 
         if (yesMarbles.length === 0 || noMarbles.length === 0) {
           alert(
